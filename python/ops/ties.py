@@ -16,6 +16,7 @@ def gather_features_from_conv_head(conv_head, vertices_y, vertices_x, vertices_y
     :param scale_x: A scalar to show x_scale
     :return: The gathered features with shape [batch, max_vertices, channels]
     """
+    # normalization
     vertices_y = tf.cast(vertices_y, tf.float32) * scale_y
     vertices_x = tf.cast(vertices_x, tf.float32) * scale_x
     vertices_y2 = tf.cast(vertices_y2, tf.float32) * scale_y
@@ -25,6 +26,7 @@ def gather_features_from_conv_head(conv_head, vertices_y, vertices_x, vertices_y
     batch_size, max_vertices = int(batch_size.value), int(max_vertices.value)
 
     batch_range = tf.range(0, batch_size, dtype=tf.float32)[..., tf.newaxis, tf.newaxis]
+    # transform the dimension to fit max_vertices
     batch_range =  tf.tile(batch_range, multiples=[1, max_vertices, 1])
 
     indexing_tensor = tf.concat((batch_range, ((vertices_y + vertices_y2 ) /2)[..., tf.newaxis], ((vertices_x + vertices_x2 ) /2)[..., tf.newaxis]), axis=-1)

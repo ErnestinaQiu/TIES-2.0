@@ -325,6 +325,8 @@ class BasicModel(ModelInterface):
 
 
     def build_computation_graphs(self):
+        """This is essential for interaction
+        """
         with tf.variable_scope(self.get_variable_scope()):
             self.make_placeholders()
             placeholders = self.placeholders_dict
@@ -347,14 +349,17 @@ class BasicModel(ModelInterface):
 
             scale_y = float(post_height) / float(image_height)
             scale_x = float(post_width) / float(image_width)
+            # conv_head consists of matrices from cnn and the positions of the cores of these word box
             gathered_image_features = gather_features_from_conv_head(conv_head, vertices_y, vertices_x,
                                                                      vertices_y2, vertices_x2, scale_y, scale_x)
 
+            # _placeholder_vertex_features = tf.placeholder(dtype=tf.float32, shape=[self.num_batch, self.max_vertices, self.num_vertex_features])
             _graph_vertex_features = placeholders['placeholder_vertex_features']
             vertices_combined_features = tf.concat(
                 (_graph_vertex_features, gathered_image_features), axis=-1)
 
             self.graph_segment.training=self.training
+            # this is the main part of graph network
             graph_features = self.graph_segment.build_network_segment(vertices_combined_features)
 
             self.build_classification_segments(graph_features, placeholders)

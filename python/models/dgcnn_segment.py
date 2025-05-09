@@ -1,7 +1,7 @@
 from models.network_segment_interface import NetworkSegmentInterface
 import tensorflow as tf
-from caloGraphNN import *
-from ops.ties import *
+from caloGraphNN import high_dim_dense, layer_global_exchange, 
+from ops.ties import gather_features_from_conv_head, edge_conv_layer, layer_GravNet2
 
 class DgcnnSegment(NetworkSegmentInterface):
     def build_network_segment(self, feat):
